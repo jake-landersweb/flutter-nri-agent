@@ -13,11 +13,14 @@ import android.os.BatteryManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 
+import com.newrelic.agent.android.NewRelic;
+
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "samples.flutter.dev/battery"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
+    NewRelic.withApplicationToken("AAf4a2c3bb308be98bbbf9008dd84b65d9cb3b4d07-NRMA").start(this.applicationContext)
     MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
         // This method is invoked on the main thread.
         call, result ->
