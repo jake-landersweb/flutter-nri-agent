@@ -158,6 +158,51 @@ class _BatteryChannelState extends State<BatteryChannel> {
       });
     }
   }
+
+  static Future<bool> setIntValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('setIntValue', {"name": "flutter-setIntName", "value": "flutter-setIntValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> setDoubleValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('setDoubleValue', {"name": "flutter-setDoubleName", "value": "flutter-setDoubleValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> setBoolValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('setBoolValue', {"name": "flutter-setBoolName", "value": "flutter-setBoolValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> incrementValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('incrementValue', {"name": "flutter-incrementName", "value": "flutter-incrementValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
 }
 
 // class BatteryChannelMethod {
