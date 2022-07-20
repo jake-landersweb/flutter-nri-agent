@@ -21,10 +21,15 @@ import Flutter
             //          result(FlutterMethodNotImplemented)
             //          return
             //        }
-            
+            guard let args = call.arguments as? [String : Any] else {return}
+                        
             switch call.method {
-            case "getBatteryLevel":NewRelicIntegration.receiveBatteryLevel(result: result)
+            case "getBatteryLevel": NewRelicIntegration.receiveBatteryLevel(result: result)
             case "testNRI": NewRelicIntegration.sendNewRelicEvent(result: result, name: "test-event")
+            case "setStringValue": NewRelicIntegration.setStringValue(args: args, result: result)
+            case "setDoubleValue": NewRelicIntegration.setDoubleValue(args: args, result: result)
+            case "setBoolValue": NewRelicIntegration.setBoolValue(args: args, result: result)
+            case "incrementValue": NewRelicIntegration.incrementValue(args: args, result: result)
             default: result(FlutterMethodNotImplemented)
             }
               
@@ -50,6 +55,48 @@ class NewRelicIntegration {
         NewRelic.setAttribute("flutterTestEvent3", value: 3)
         result(val)
     }
+    
+    static func setStringValue(args: [String:Any], result: FlutterResult){
+        let name = args["name"] as? String ?? "String not found"
+        let value = args["value"] as? String ?? "Value not found"
+        let response: Bool = NewRelic.setAttribute(name, value: value)
+        result(response)
+        
+    }
+    
+    static func setIntValue(args: [String:Any], result: FlutterResult){
+     let name = args["name"] as? String ?? "String not found"
+     let value: Int = args["value"] as! Int
+     let response: Bool = NewRelic.setAttribute(name, value: value)
+     result(response)
+    }
+    
+    static func setDoubleValue(args: [String:Any], result: FlutterResult){
+     let name = args["name"] as? String ?? "String not found"
+     let value: Double = args["value"] as! Double
+     let response: Bool = NewRelic.setAttribute(name, value: value)
+     result(response)
+    }
+    
+    static func setBoolValue(args: [String:Any], result: FlutterResult){
+     let name = args["name"] as? String ?? "String not found"
+     let value: Bool = args["value"] as! Bool
+     let response: Bool = NewRelic.setAttribute(name, value: value)
+     result(response)
+    }
+    
+    static func incrementValue(args: [String:Any], result: FlutterResult){
+     let name = args["name"] as? String ?? "String not found"
+     let value = args["value"] as? String ?? "Value not found"
+     let response: Bool = NewRelic.setAttribute(name, value: value)
+     result(response)
+    }
+    
+    /*
+    static func setCustomValue(result: String, value: Int){
+    
+    }*/
+    
     
     static func receiveBatteryLevel(result: FlutterResult) {
       let device = UIDevice.current

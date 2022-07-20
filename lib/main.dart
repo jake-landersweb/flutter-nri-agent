@@ -61,7 +61,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
             const SizedBox(height: 16),
             InkWell(
               onTap: () async {
-                var bat = await BatteryChannelMethod.sendNREvent();
+                var bat = await BatteryChannelMethod.setStringValue();
                 log(bat.toString());
               },
               child: const Text(
@@ -91,14 +91,60 @@ class BatteryChannelMethod {
     return batteryLevel;
   }
 
-  static Future<bool> sendNREvent() async {
+  //sendNREvent
+  static Future<bool> setStringValue() async {
     late bool val;
     try {
-      val = await platform.invokeMethod('testNRI');
+      val = await platform.invokeMethod('setStringValue', {"name": "flutter-setStringName", "value": "flutter-setStringValue"});
       return val;
     } on PlatformException catch (e) {
       print(e);
       return false;
     }
   }
+
+  static Future<bool> setIntValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('setIntValue', {"name": "flutter-setIntName", "value": "flutter-setIntValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> setDoubleValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('setDoubleValue', {"name": "flutter-setDoubleName", "value": "flutter-setDoubleValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> setBoolValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('setBoolValue', {"name": "flutter-setBoolName", "value": "flutter-setBoolValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> incrementValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('incrementValue', {"name": "flutter-incrementName", "value": "flutter-incrementValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
 }
