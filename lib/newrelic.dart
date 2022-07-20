@@ -21,19 +21,6 @@ class NRIFlutter {
     }
   }
 
-  static Future<bool> setIntValue(String name, int value) async {
-    late bool response;
-    try {
-      final Map<String, dynamic> params = {'name': name, "value": value};
-      response = await platform.invokeMethod('setIntValue', params);
-      return response;
-    } catch (e, stacktrace) {
-      log(e.toString());
-      log(stacktrace.toString());
-      return false;
-    }
-  }
-
   static Future<bool> setDoubleValue(String name, double value) async {
     late bool response;
     try {
@@ -60,7 +47,7 @@ class NRIFlutter {
     }
   }
 
-  static Future<bool> incrementValue(String name, {int value = 1}) async {
+  static Future<bool> incrementValue(String name, {double value = 1.0}) async {
     late bool response;
     try {
       final Map<String, dynamic> params = {'name': name, "value": value};

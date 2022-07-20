@@ -16,7 +16,7 @@ import android.os.Build.VERSION_CODES
 import com.newrelic.agent.android.NewRelic;
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "samples.flutter.dev/battery"
+    private val CHANNEL = "nri.flutter"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
