@@ -48,7 +48,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
             const SizedBox(height: 16),
             InkWell(
               onTap: () async {
-                var bat = await BatteryChannelMethod.getBatteryLevel();
+                var bat = await AppChannelMethods.getBatteryLevel();
                 setState(() {
                   _batteryLevel = bat;
                 });
@@ -61,11 +61,66 @@ class _BatteryChannelState extends State<BatteryChannel> {
             const SizedBox(height: 16),
             InkWell(
               onTap: () async {
-                var bat = await BatteryChannelMethod.sendNREvent();
+                var bat = await AppChannelMethods.sendStringValue();
                 log(bat.toString());
               },
               child: const Text(
-                "Test Event",
+                "Test String",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: () async {
+                var bat = await AppChannelMethods.sendIntValue();
+                log(bat.toString());
+              },
+              child: const Text(
+                "Test Int",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: () async {
+                var bat = await AppChannelMethods.sendDoubleValue();
+                log(bat.toString());
+              },
+              child: const Text(
+                "Test Double",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: () async {
+                var bat = await AppChannelMethods.sendBoolValue();
+                log(bat.toString());
+              },
+              child: const Text(
+                "Test Bool",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: () async {
+                var bat = await AppChannelMethods.sendIncrementValue();
+                log(bat.toString());
+              },
+              child: const Text(
+                "Test Increment Value",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: () async {
+                var bat = await AppChannelMethods.sendCustomValue();
+                log(bat.toString());
+              },
+              child: const Text(
+                "Test Custom Value",
                 textAlign: TextAlign.center,
               ),
             ),
@@ -76,7 +131,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
   }
 }
 
-class BatteryChannelMethod {
+class AppChannelMethods {
   static const platform = MethodChannel('samples.flutter.dev/battery');
 
   static Future<String> getBatteryLevel() async {
@@ -91,10 +146,79 @@ class BatteryChannelMethod {
     return batteryLevel;
   }
 
-  static Future<bool> sendNREvent() async {
+  static Future<bool> sendStringValue() async {
     late bool val;
     try {
-      val = await platform.invokeMethod('testNRI');
+      val = await platform.invokeMethod(
+          'setStringValue', {"name": "stringName", "value": "stringValue"});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // setIntValue(name: string, value: int) -> bool
+  static Future<bool> sendIntValue() async {
+    late bool val;
+    try {
+      val = await platform
+          .invokeMethod('setIntValue', {"name": "intName", "value": 100});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // setDoubleValue(name: string, value: double) -> bool
+  static Future<bool> sendDoubleValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod(
+          'setDoubleValue', {"name": "doubleName", "value": 0.001});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // setBoolValue(name: string, value: bool) -> bool
+  static Future<bool> sendBoolValue() async {
+    late bool val;
+    try {
+      val = await platform
+          .invokeMethod('setBoolValue', {"name": "boolName", "value": false});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // incrementValue(name: string, value: int) -> bool
+  static Future<bool> sendIncrementValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod(
+          'setIncrementValue', {"name": "incrementValueName", "value": 5});
+      return val;
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // setCustomValue(type: string, name: string, attributes: Map<String, dynamic>) -> bool
+  static Future<bool> sendCustomValue() async {
+    late bool val;
+    try {
+      val = await platform.invokeMethod('setCustomValue', {
+        "type": "customType",
+        "name": "customValueName",
+        "attributes": {}
+      });
       return val;
     } on PlatformException catch (e) {
       print(e);
