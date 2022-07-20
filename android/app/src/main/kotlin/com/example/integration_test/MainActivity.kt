@@ -59,7 +59,7 @@ class MainActivity: FlutterActivity() {
           val response: Boolean = NewRelic.setAttribute(name, value)
           result.success(response)
 
-        } else if (call.method == "setIncrementValue"){
+        } else if (call.method == "incrementValue"){
           val name: String = call.argument("name")!!
           var value: Double = call.argument("value")!!
           val response: Boolean = NewRelic.incrementAttribute(name, value)
@@ -71,6 +71,20 @@ class MainActivity: FlutterActivity() {
           val attributes: Map<String, Any>? = call.argument("attributes")!!
           val response = NewRelic.recordCustomEvent(type, name, attributes)
           result.success(response)
+
+        } else if (call.method == "triggerException"){
+          val framework: String = call.argument("value")!!
+
+          try{
+            if (framework.equals("flutter")){
+              println("framework not equal to flutter")
+              throw Exception("React is the incorrect framework!")
+            }
+
+          } catch (e: Exception){
+            NewRelic.recordHandledException(e)
+            result.success(true)
+          }
 
         } else{
           result.error("UNAVAILABLE","Data .", null)
