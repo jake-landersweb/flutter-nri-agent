@@ -1,10 +1,10 @@
-# integration_test
+# New Relic's integration with Flutter
 
-A new Flutter project.
+This project uses New Relic's iOS and Android agents to provide observability into a Flutter application. Currently New Relic supports agents for single OS applications such as iOS/Android. As Flutter/other cross platform frameworks grow in popularity, it's necessary for New Relic's observability options to expand as well. 
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a starting point for a Flutter application integrated with New Relic One.
 
 A few resources to get you started if this is your first Flutter project:
 
