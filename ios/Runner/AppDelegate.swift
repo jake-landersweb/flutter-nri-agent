@@ -92,10 +92,17 @@ class NewRelicIntegration {
      result(response)
     }
     
-    /*
-    static func setCustomValue(result: String, value: Int){
+    static func setCustomValue(args: [String : Any], result: FlutterResult) {
+     let type = args["type"] as? String ?? "Flutter"
+     let response: Bool = NewRelic.recordCustomEvent(type)
+     result(response)
+    }
     
-    }*/
+    static func recordException(args: [String: Any], result: FlutterResult){
+        let stacktrace = args["stacktrace"] as? String ?? "String not found"
+         NewRelic.recordHandledException(NSException.init(name: NSExceptionName.genericException, reason: stacktrace))
+        result(true)
+    }
     
     
     static func receiveBatteryLevel(result: FlutterResult) {
@@ -108,24 +115,6 @@ class NewRelicIntegration {
       } else {
         result(Int(device.batteryLevel * 100))
       }
-    }
-    
-    static func recordException(args: [String: Any], result: FlutterResult){
-        let stacktrace = args["stacktrace"] as? String ?? "String not found"
-         NewRelic.recordHandledException(NSException.init(name: NSExceptionName.genericException, reason: stacktrace))
-        result(true)
-        /*do {
-            let name = stacktrace
-            let response: Bool = NewRelic.recordHandledException(NSException)
-            try response.catchException {
-
-               /* calls that might throw an NSException */
-            }
-        }
-        catch {
-            print("An error ocurred: \(error)")
-        }*/
-        
     }
     
 }
