@@ -109,4 +109,23 @@ class NewRelicIntegration {
         result(Int(device.batteryLevel * 100))
       }
     }
+    
+    static func recordException(args: [String: Any], result: FlutterResult){
+        let stacktrace = args["stacktrace"] as? String ?? "String not found"
+         NewRelic.recordHandledException(NSException.init(name: NSExceptionName.genericException, reason: stacktrace))
+        result(true)
+        /*do {
+            let name = stacktrace
+            let response: Bool = NewRelic.recordHandledException(NSException)
+            try response.catchException {
+
+               /* calls that might throw an NSException */
+            }
+        }
+        catch {
+            print("An error ocurred: \(error)")
+        }*/
+        
+    }
+    
 }
