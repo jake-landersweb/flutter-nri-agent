@@ -16,31 +16,18 @@ import Flutter
                                                 binaryMessenger: controller.binaryMessenger)
         batteryChannel.setMethodCallHandler({
         [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
-            // This method is invoked on the UI thread.
-            //        guard call.method == "getBatteryLevel" else {
-            //          result(FlutterMethodNotImplemented)
-            //          return
-            //        }
             guard let args = call.arguments as? [String : Any] else {return}
-                        
+                     
+            /* dependig on case, program will call specfic method*/
             switch call.method {
-            case "getBatteryLevel": NewRelicIntegration.receiveBatteryLevel(result: result)
             case "testNRI": NewRelicIntegration.sendNewRelicEvent(result: result, name: "test-event")
             case "setStringValue": NewRelicIntegration.setStringValue(args: args, result: result)
             case "setDoubleValue": NewRelicIntegration.setDoubleValue(args: args, result: result)
             case "setBoolValue": NewRelicIntegration.setBoolValue(args: args, result: result)
             case "incrementValue": NewRelicIntegration.incrementValue(args: args, result: result)
+            case "setCustomValue": NewRelicIntegration.setCustomValue(args: args, result: result)
             default: result(FlutterMethodNotImplemented)
             }
-              
-//            if call.method == "getBatteryLevel" {
-//                receiveBatteryLevel(result: result)
-//            } else if call.method == "testNRI" {
-//                NewRelicIntegration.sendNewRelicEvent(result: result, name: "test-event")
-//            } else {
-//                result(FlutterMethodNotImplemented)
-//                return
-          
         })
     
     GeneratedPluginRegistrant.register(with: self)
@@ -48,6 +35,7 @@ import Flutter
   }
 }
 
+/* all of the native methods for ios are defined below*/
 class NewRelicIntegration {
     static func sendNewRelicEvent(result: FlutterResult, name: String) {
         let val: Bool = NewRelic.recordCustomEvent("flutterTestEvent2", name: "ios")
@@ -55,14 +43,15 @@ class NewRelicIntegration {
         result(val)
     }
     
+    // returns true or false based on response
     static func setStringValue(args: [String:Any], result: FlutterResult){
         let name = args["name"] as? String ?? "String not found"
         let value = args["value"] as? String ?? "Value not found"
         let response: Bool = NewRelic.setAttribute(name, value: value)
         result(response)
-        
     }
     
+    // set integer method
     static func setIntValue(args: [String:Any], result: FlutterResult){
      let name = args["name"] as? String ?? "String not found"
      let value: Int = args["value"] as! Int
@@ -70,6 +59,7 @@ class NewRelicIntegration {
      result(response)
     }
     
+    //set double method
     static func setDoubleValue(args: [String:Any], result: FlutterResult){
      let name = args["name"] as? String ?? "String not found"
      let value: Double = args["value"] as! Double
@@ -77,6 +67,7 @@ class NewRelicIntegration {
      result(response)
     }
     
+    // set bool method
     static func setBoolValue(args: [String:Any], result: FlutterResult){
      let name = args["name"] as? String ?? "String not found"
      let value: Bool = args["value"] as! Bool
@@ -84,6 +75,7 @@ class NewRelicIntegration {
      result(response)
     }
     
+    // incrementValue method
     static func incrementValue(args: [String:Any], result: FlutterResult){
      let name = args["name"] as? String ?? "String not found"
      let value = args["value"] as? String ?? "Value not found"
@@ -91,6 +83,7 @@ class NewRelicIntegration {
      result(response)
     }
     
+    // set customValue method
     static func setCustomValue(args: [String : Any], result: FlutterResult) {
      let type = args["type"] as? String ?? "Flutter"
      let response: Bool = NewRelic.recordCustomEvent(type)
@@ -98,22 +91,9 @@ class NewRelicIntegration {
     }
     
     static func recordException(args: [String: Any], result: FlutterResult){
-        let stacktrace = args["stacktrace"] as? String ?? "String not found"
-         NewRelic.recordHandledException(NSException.init(name: NSExceptionName.genericException, reason: stacktrace))
-        result(true)
-    }
-    
-    
-    static func receiveBatteryLevel(result: FlutterResult) {
-      let device = UIDevice.current
-      device.isBatteryMonitoringEnabled = true
-      if device.batteryState == UIDevice.BatteryState.unknown {
-        result(FlutterError(code: "UNAVAILABLE",
-                            message: "Battery level not available. Hello world",
-                            details: nil))
-      } else {
-        result(Int(device.batteryLevel * 100))
-      }
+     let stacktrace = args["stacktrace"] as? String ?? "String not found"
+     NewRelic.recordHandledException(NSException.init(name: NSExceptionName.genericException, reason: stacktrace))
+     result(true)
     }
     
 }
