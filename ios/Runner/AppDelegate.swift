@@ -26,12 +26,12 @@ import Flutter
             guard let args = call.arguments as? [String : Any] else {return}
                         
             switch call.method {
-            case "getBatteryLevel": NewRelicIntegration.receiveBatteryLevel(result: result)
             case "testNRI": NewRelicIntegration.sendNewRelicEvent(result: result, name: "test-event")
             case "setStringValue": NewRelicIntegration.setStringValue(args: args, result: result)
             case "setDoubleValue": NewRelicIntegration.setDoubleValue(args: args, result: result)
             case "setBoolValue": NewRelicIntegration.setBoolValue(args: args, result: result)
             case "incrementValue": NewRelicIntegration.incrementValue(args: args, result: result)
+            case "setCustomValue": NewRelicIntegration.setCustomValue(args: args, result: result)
             default: result(FlutterMethodNotImplemented)
             }
               
@@ -63,7 +63,6 @@ class NewRelicIntegration {
         let value = args["value"] as? String ?? "Value not found"
         let response: Bool = NewRelic.setAttribute(name, value: value)
         result(response)
-        
     }
     
     static func setIntValue(args: [String:Any], result: FlutterResult){
@@ -94,34 +93,10 @@ class NewRelicIntegration {
      result(response)
     }
     
-    /*
-    static func setCustomValue(result: String, value: Int){
-    
-    }*/
-    
-    
-    static func receiveBatteryLevel(result: FlutterResult) {
-      let device = UIDevice.current
-      device.isBatteryMonitoringEnabled = true
-//      if device.batteryState == UIDevice.BatteryState.unknown {
-//        result(FlutterError(code: "UNAVAILABLE",
-//                            message: "Battery level not available. Hello world",
-//                            details: nil))
-//      } else {
-//        result(Int(device.batteryLevel * 100))
-//      }
-    }
-    
-    static func setStringValue(args: [String : Any], result: FlutterResult) {
-        let name = args["name"] as? String ?? "unknownName"
-        let value = args["value"] as? String ?? "unknownValue"
-        let response: Bool = NewRelic.setAttribute(name, value: value)
-        result(response)
-    }
-    
     static func setCustomValue(args: [String : Any], result: FlutterResult) {
         let type = args["type"] as? String ?? "Flutter"
-        let response: Bool = NewRelic.recordCustomEvent(type)
+        let attributes = args["attributes"] as! [String : Any]
+        let response: Bool = NewRelic.recordCustomEvent(type, attributes: attributes)
         result(response)
     }
 }
