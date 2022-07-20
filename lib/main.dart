@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:integration_test/newrelic.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,8 +35,9 @@ class BatteryChannel extends StatefulWidget {
 }
 
 class _BatteryChannelState extends State<BatteryChannel> {
-  String _batteryLevel = 'Unknown battery level.';
+  String _battery = "N/A";
 
+  String _customValue = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,187 +45,144 @@ class _BatteryChannelState extends State<BatteryChannel> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              _batteryLevel,
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                var bat = await AppChannelMethods.getBatteryLevel();
-                setState(() {
-                  _batteryLevel = bat;
-                });
-              },
-              child: const Text(
-                "Get Battery",
-                textAlign: TextAlign.center,
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextFormField(
+                decoration: const InputDecoration(hintText: "Custom value"),
+                onChanged: (value) {
+                  setState(() {
+                    _customValue = value;
+                  });
+                },
               ),
             ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                var bat = await AppChannelMethods.sendStringValue();
-                log(bat.toString());
-              },
-              child: const Text(
-                "Test String",
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                var bat = await AppChannelMethods.sendIntValue();
-                log(bat.toString());
-              },
-              child: const Text(
-                "Test Int",
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                var bat = await AppChannelMethods.sendDoubleValue();
-                log(bat.toString());
-              },
-              child: const Text(
-                "Test Double",
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                var bat = await AppChannelMethods.sendBoolValue();
-                log(bat.toString());
-              },
-              child: const Text(
-                "Test Bool",
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                var bat = await AppChannelMethods.sendIncrementValue();
-                log(bat.toString());
-              },
-              child: const Text(
-                "Test Increment Value",
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                var bat = await AppChannelMethods.sendCustomValue();
-                log(bat.toString());
-              },
-              child: const Text(
-                "Test Custom Value",
-                textAlign: TextAlign.center,
-              ),
+            CupertinoButton(
+                child: Text("setStringValue"),
+                onPressed: () async {
+                  var response = await NRIFlutter.setStringValue(
+                      "flutterSetStringValue", _customValue);
+                  showSnackBar(context, response);
+                }),
+            const SizedBox(height: 8),
+            _button("setStringValue", () async {
+              var response = await NRIFlutter.setStringValue(
+                  "flutterSetStringValue77", "value77");
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("setIntValue", () async {
+              var response =
+                  await NRIFlutter.setIntValue("flutter-setIntValue", 1);
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("setDoubleValue", () async {
+              var response = await NRIFlutter.setDoubleValue(
+                  "flutter-setDoubleValue", 2.0);
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("setBoolValue", () async {
+              var response =
+                  await NRIFlutter.setBoolValue("flutter-setBoolValue", true);
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("incrementValue", () async {
+              var response = await NRIFlutter.incrementValue(
+                  "flutter-incrementValue",
+                  value: 3);
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("setCustomValue", () async {
+              var response = await NRIFlutter.setCustomValue("Flutter");
+              showSnackBar(context, response);
+            }),
+            Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Image.asset("assets/newrelic.png"),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class AppChannelMethods {
+  void showSnackBar(BuildContext context, bool response) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          response ? "Successfully sent NRI event" : "Failed to send NRI event",
+        ),
+      ),
+    );
+  }
+
+  Widget _button(String name, VoidCallback onTap) {
+    return CupertinoButton(
+      minSize: 0,
+      padding: EdgeInsets.zero,
+      borderRadius: BorderRadius.zero,
+      onPressed: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+            color: const Color.fromRGBO(29, 37, 44, 1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+                color: const Color.fromRGBO(4, 171, 105, 1), width: 2)),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            name,
+            style: const TextStyle(
+                fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
   static const platform = MethodChannel('samples.flutter.dev/battery');
-
-  static Future<String> getBatteryLevel() async {
-    String batteryLevel;
+  void getBatteryLevel() async {
     try {
       final int result = await platform.invokeMethod('getBatteryLevel');
-      batteryLevel = 'Battery level at $result % .';
-    } on PlatformException catch (e) {
-      batteryLevel = "Failed to get battery level: '${e.message}'.";
-    }
-
-    return batteryLevel;
-  }
-
-  static Future<bool> sendStringValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod(
-          'setStringValue', {"name": "stringName", "value": "stringValue"});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  // setIntValue(name: string, value: int) -> bool
-  static Future<bool> sendIntValue() async {
-    late bool val;
-    try {
-      val = await platform
-          .invokeMethod('setIntValue', {"name": "intName", "value": 100});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  // setDoubleValue(name: string, value: double) -> bool
-  static Future<bool> sendDoubleValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod(
-          'setDoubleValue', {"name": "doubleName", "value": 0.001});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  // setBoolValue(name: string, value: bool) -> bool
-  static Future<bool> sendBoolValue() async {
-    late bool val;
-    try {
-      val = await platform
-          .invokeMethod('setBoolValue', {"name": "boolName", "value": false});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  // incrementValue(name: string, value: int) -> bool
-  static Future<bool> sendIncrementValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod(
-          'setIncrementValue', {"name": "incrementValueName", "value": 5});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  // setCustomValue(type: string, name: string, attributes: Map<String, dynamic>) -> bool
-  static Future<bool> sendCustomValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod('setCustomValue', {
-        "type": "customType",
-        "name": "customValueName",
-        "attributes": {}
+      setState(() {
+        _battery = result.toString();
       });
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
+    } catch (e, stacktrace) {
+      log(e.toString());
+      log(stacktrace.toString());
+      setState(() {
+        _battery = "N/A";
+      });
     }
   }
 }
+
+// class BatteryChannelMethod {
+//   static const platform = MethodChannel('samples.flutter.dev/battery');
+
+  // static Future<String> getBatteryLevel() async {
+  //   String batteryLevel;
+  //   try {
+  //     final int result = await platform.invokeMethod('getBatteryLevel');
+  //     batteryLevel = 'Battery level at $result % .';
+  //   } on PlatformException catch (e) {
+  //     batteryLevel = "Failed to get battery level: '${e.message}'.";
+  //   }
+
+  //   return batteryLevel;
+  // }
+
+//   static Future<bool> sendNREvent() async {
+//     late bool val;
+//     try {
+//       val = await platform.invokeMethod('testNRI');
+//       return val;
+//     } on PlatformException catch (e) {
+//       print(e);
+//       return false;
+//     }
+//   }
+// }
