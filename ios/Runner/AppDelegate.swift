@@ -8,12 +8,14 @@ import Flutter
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+      NRLogger.setLogLevels(NRLogLevelALL.rawValue)
         NewRelic.start(withApplicationToken:"AA517741931cdae6b41f7a298aa7fa2370f821a447-NRMA")
         NewRelic.enableCrashReporting(true)
+        NewRelic.removeAllAttributes()
+//      NewRelic.setAttribute("PLEASEWORKNAME", value: "PLEASEWORKVALUE")
 
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        let batteryChannel = FlutterMethodChannel(name: "samples.flutter.dev/battery",
-                                                binaryMessenger: controller.binaryMessenger)
+        let batteryChannel = FlutterMethodChannel(name: "nri.flutter", binaryMessenger: controller.binaryMessenger)
         batteryChannel.setMethodCallHandler({
         [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
             guard let args = call.arguments as? [String : Any] else {return}
@@ -83,17 +85,17 @@ class NewRelicIntegration {
      result(response)
     }
     
-    // set customValue method
-    static func setCustomValue(args: [String : Any], result: FlutterResult) {
-     let type = args["type"] as? String ?? "Flutter"
-     let response: Bool = NewRelic.recordCustomEvent(type)
-     result(response)
-    }
-    
     static func recordException(args: [String: Any], result: FlutterResult){
      let stacktrace = args["stacktrace"] as? String ?? "String not found"
      NewRelic.recordHandledException(NSException.init(name: NSExceptionName.genericException, reason: stacktrace))
      result(true)
+    }
+  
+    static func setCustomValue(args: [String : Any], result: FlutterResult) {
+        let type = args["type"] as? String ?? "Flutter"
+        let attributes = args["attributes"] as! [String : Any]
+        let response: Bool = NewRelic.recordCustomEvent(type, attributes: attributes)
+        result(response)
     }
     
 }
