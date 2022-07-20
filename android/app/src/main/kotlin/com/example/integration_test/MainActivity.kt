@@ -16,7 +16,7 @@ import android.os.Build.VERSION_CODES
 import com.newrelic.agent.android.NewRelic;
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "samples.flutter.dev/battery"
+    private val CHANNEL = "nri.flutter"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
@@ -33,8 +33,47 @@ class MainActivity: FlutterActivity() {
           } else {
             result.error("UNAVAILABLE", "Battery level not available.", null)
           }
-        } else {
-          result.notImplemented()
+        } 
+        //setStringValue(name: string, value: string) -> bool
+        else if (call.method == "setStringValue"){
+          val name: String = call.argument("name")!!
+          val value: String = call.argument("value")!!
+          val response: Boolean = NewRelic.setAttribute(name, value)
+          result.success(response)
+
+        } else if (call.method == "setIntValue"){
+          val name: String = call.argument("name")!!
+          val value: Int = call.argument("value")!!
+          val response: Boolean = NewRelic.setAttribute(name, value.toString())
+          result.success(response)
+
+        } else if (call.method == "setDoubleValue"){
+          val name: String = call.argument("name")!!
+          val value: Double = call.argument("value")!!
+          val response: Boolean = NewRelic.setAttribute(name, value)
+          result.success(response)
+
+        } else if (call.method == "setBoolValue"){
+          val name: String = call.argument("name")!!
+          val value: Boolean = call.argument("value")!!
+          val response: Boolean = NewRelic.setAttribute(name, value)
+          result.success(response)
+
+        } else if (call.method == "setIncrementValue"){
+          val name: String = call.argument("name")!!
+          var value: Double = call.argument("value")!!
+          val response: Boolean = NewRelic.incrementAttribute(name, value)
+          result.success(response)
+
+        } else if (call.method == "setCustomValue"){
+          val type: String = call.argument("type")!!
+          val name: String = call.argument("name")!!
+          val attributes: Map<String, Any>? = call.argument("attributes")!!
+          val response = NewRelic.recordCustomEvent(type, name, attributes)
+          result.success(response)
+
+        } else{
+          result.error("UNAVAILABLE","Data .", null)
         }
       }
     }
