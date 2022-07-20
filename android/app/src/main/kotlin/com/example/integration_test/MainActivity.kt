@@ -61,9 +61,8 @@ class MainActivity: FlutterActivity() {
 
         } else if (call.method == "setIncrementValue"){
           val name: String = call.argument("name")!!
-          var value: Int = call.argument("value")!!
-          value = value + 1 
-          val response: Boolean = NewRelic.setAttribute(name, value.toString())
+          var value: Double = call.argument("value")!!
+          val response: Boolean = NewRelic.incrementAttribute(name, value)
           result.success(response)
 
         } else if (call.method == "setCustomValue"){
