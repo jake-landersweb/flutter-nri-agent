@@ -28,6 +28,8 @@ import Flutter
             case "setBoolValue": NewRelicIntegration.setBoolValue(args: args, result: result)
             case "incrementValue": NewRelicIntegration.incrementValue(args: args, result: result)
             case "setCustomValue": NewRelicIntegration.setCustomValue(args: args, result: result)
+            case "recordException": NewRelicIntegration.recordException(args: args, result: result)
+            case "crashNow": NewRelicIntegration.crashNow(result: result)
             default: result(FlutterMethodNotImplemented)
             }
         })
@@ -85,12 +87,14 @@ class NewRelicIntegration {
      result(response)
     }
     
+    // record an exception
     static func recordException(args: [String: Any], result: FlutterResult){
      let stacktrace = args["stacktrace"] as? String ?? "String not found"
      NewRelic.recordHandledException(NSException.init(name: NSExceptionName.genericException, reason: stacktrace))
      result(true)
     }
-  
+    
+    // set a custom value
     static func setCustomValue(args: [String : Any], result: FlutterResult) {
         let type = args["type"] as? String ?? "Flutter"
         let attributes = args["attributes"] as! [String : Any]
@@ -98,4 +102,9 @@ class NewRelicIntegration {
         result(response)
     }
     
+    // crash the app
+    static func crashNow(result: FlutterResult) {
+        NewRelic.crashNow()
+        result(true)
+    }
 }
