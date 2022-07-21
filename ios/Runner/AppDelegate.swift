@@ -8,8 +8,8 @@ import Flutter
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-      NRLogger.setLogLevels(NRLogLevelALL.rawValue)
-        NewRelic.start(withApplicationToken:"AA517741931cdae6b41f7a298aa7fa2370f821a447-NRMA")
+      NRLogger.setLogLevels(NRLogLevelALL.rawValue) 
+        NewRelic.start(withApplicationToken: " YOUR APP TOKEN ")
         NewRelic.enableCrashReporting(true)
         NewRelic.removeAllAttributes()
 //      NewRelic.setAttribute("PLEASEWORKNAME", value: "PLEASEWORKVALUE")

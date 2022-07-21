@@ -4,12 +4,7 @@ This project uses New Relic's iOS and Android agents to provide observability in
 
 ## Getting Started
 
-This project is a starting point for a Flutter application integrated with New Relic One.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Checkout `install.md` for how to integrate this project on your New Relic account
 
 ## Repository Layout
 The strucutre of the demo app used to communicate with New Relic's database can be found in ```lib/main.dart```. This file renders buttons to simulate each type of the following method calls. A button clicked will trigger a method in the respective OS's native code.
@@ -32,5 +27,5 @@ The JSON file for the dashboard to be imported can be found in ```dashboard.json
 The metrics displayed in the dashboard include: ```Average Session Duration, Button Clicks, Average/Max Memory Usage, Exceptions, Network Latency and Crashes```. 
 Metrics are collected on both iOS and Android and both OS's data can be visualized on the same panel to compare/contrast application performance. 
 
-<img width="1705" alt="Screen Shot 2022-07-20 at 3 55 44 PM" src="https://source.datanerd.us/jlanders/integration_test/blob/main/dashboard_flutter01.png">
+<img width="1705" alt="Flutter Dashboard" src="https://github.com/jake-landersweb/flutter-nri-agent/blob/main/dashboard_flutter01.png">
 

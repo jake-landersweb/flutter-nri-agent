@@ -19,9 +19,9 @@ class MainActivity: FlutterActivity() {
     private val CHANNEL = "nri.flutter"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-      NewRelic.withApplicationToken("AAf4a2c3bb308be98bbbf9008dd84b65d9cb3b4d07-NRMA").start(this.applicationContext)
+      NewRelic.withApplicationToken(" YOUR APP TOKEN ").start(this.applicationContext)
       super.onCreate(savedInstanceState)
-  }
+    }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
