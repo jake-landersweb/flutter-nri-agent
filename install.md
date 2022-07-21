@@ -35,6 +35,20 @@ Specific interactions with the agent can be found inside of this project. Make s
 
 ## Run the app
 
+Build the application and make sure metrics are being reported on your New Relic dashboard.
+
+## Edit the dashboard
+
+Using the sample dashboard, you can change some of the NRQL queries to fit your application's metadata. Don't be intimidated, these changes are minor!
+
+On the dashboard, you can click the three dots in the corner of the cells. Click on `edit`. Then anywhere you see the attribute `entityGuid`, change it to your apps guid depending if it is android or ios. Then, anywhere you see `appName`, change it to the name you gave your android / ios app name inside of New Relic. 
+
+## Adding New Metrics to the Dashboard
+
+If there are other things you want to test out that you can track, send a custom Event to New Relic with the type of `Flutter`. This is how we drive the `Button Clicks` and `Exceptions` dashboard panels.
+
+> Note: For GUID, if you remove the value, New Relic will try to auto-complete to use your personal value.
+
 ## Authors
 
 - Jake Landers
