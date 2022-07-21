@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:integration_test/newrelic.dart';
+import 'package:integration_test/requests.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,8 +23,30 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       home: const BatteryChannel(),
     );
+  }
+}
+
+class NewRelicMiddleWare extends StatefulWidget {
+  const NewRelicMiddleWare({Key? key}) : super(key: key);
+
+  @override
+  State<NewRelicMiddleWare> createState() => _NewRelicMiddleWareState();
+}
+
+class _NewRelicMiddleWareState extends State<NewRelicMiddleWare> {
+  @override
+  void initState() {
+    // run here
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const BatteryChannel();
   }
 }
 
@@ -35,9 +58,6 @@ class BatteryChannel extends StatefulWidget {
 }
 
 class _BatteryChannelState extends State<BatteryChannel> {
-  String _battery = "N/A";
-
-  String _customValue = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,63 +66,91 @@ class _BatteryChannelState extends State<BatteryChannel> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                decoration: const InputDecoration(hintText: "Custom value"),
-                onChanged: (value) {
-                  setState(() {
-                    _customValue = value;
-                  });
-                },
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                children: [
+                  Image.asset("assets/newrelic.png"),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Team: 2nd Is The Best",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                  ),
+                ],
               ),
             ),
-            CupertinoButton(
-                child: Text("setStringValue"),
-                onPressed: () async {
-                  var response = await NRIFlutter.setStringValue(
-                      "flutterSetStringValue", _customValue);
-                  showSnackBar(context, response);
-                }),
-            const SizedBox(height: 8),
-            _button("setStringValue", () async {
+            _button("Send String", () async {
               var response = await NRIFlutter.setStringValue(
                   "flutterSetStringValue77", "value77");
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
-            _button("setIntValue", () async {
-              var response =
-                  await NRIFlutter.setIntValue("flutter-setIntValue", 1);
-              showSnackBar(context, response);
-            }),
-            const SizedBox(height: 8),
-            _button("setDoubleValue", () async {
+            _button("Send Double", () async {
               var response = await NRIFlutter.setDoubleValue(
                   "flutter-setDoubleValue", 2.0);
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
-            _button("setBoolValue", () async {
+            _button("Send Bool", () async {
               var response =
                   await NRIFlutter.setBoolValue("flutter-setBoolValue", true);
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
-            _button("incrementValue", () async {
+            _button("Increment Value", () async {
               var response = await NRIFlutter.incrementValue(
                   "flutter-incrementValue",
                   value: 3);
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
-            _button("setCustomValue", () async {
+            _button("Send Custom Event", () async {
               var response = await NRIFlutter.setCustomValue("Flutter");
               showSnackBar(context, response);
             }),
-            Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Image.asset("assets/newrelic.png"),
-            ),
+            const SizedBox(height: 8),
+            _button("Send Request", () async {
+              var response = await sendRequest();
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("Send Exception", () async {
+              late bool response;
+              try {
+                int err = int.parse("hello world");
+              } catch (error) {
+                // send the nr event
+                response = await NRIFlutter.setCustomValue(
+                  "Flutter",
+                  name: "Flutter",
+                  attributes: {"exceptions": 1},
+                );
+              }
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("Click Button", () async {
+              late bool response;
+              try {
+                int err = int.parse("hello world");
+              } catch (error) {
+                // send the nr event
+                response = await NRIFlutter.setCustomValue(
+                  "Flutter",
+                  name: "Flutter",
+                  attributes: {"buttonClicks": 1},
+                );
+              }
+              showSnackBar(context, response);
+            }),
+            const SizedBox(height: 8),
+            _button("Crash App", () async {
+              var response = await NRIFlutter.crashNow();
+              showSnackBar(context, response);
+            }),
           ],
         ),
       ),
@@ -115,6 +163,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
         content: Text(
           response ? "Successfully sent NRI event" : "Failed to send NRI event",
         ),
+        duration: const Duration(seconds: 1),
       ),
     );
   }
@@ -142,67 +191,6 @@ class _BatteryChannelState extends State<BatteryChannel> {
       ),
     );
   }
-
-  static const platform = MethodChannel('samples.flutter.dev/battery');
-  void getBatteryLevel() async {
-    try {
-      final int result = await platform.invokeMethod('getBatteryLevel');
-      setState(() {
-        _battery = result.toString();
-      });
-    } catch (e, stacktrace) {
-      log(e.toString());
-      log(stacktrace.toString());
-      setState(() {
-        _battery = "N/A";
-      });
-    }
-  }
-
-  static Future<bool> setIntValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod('setIntValue', {"name": "flutter-setIntName", "value": "flutter-setIntValue"});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  static Future<bool> setDoubleValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod('setDoubleValue', {"name": "flutter-setDoubleName", "value": "flutter-setDoubleValue"});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  static Future<bool> setBoolValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod('setBoolValue', {"name": "flutter-setBoolName", "value": "flutter-setBoolValue"});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
-  static Future<bool> incrementValue() async {
-    late bool val;
-    try {
-      val = await platform.invokeMethod('incrementValue', {"name": "flutter-incrementName", "value": "flutter-incrementValue"});
-      return val;
-    } on PlatformException catch (e) {
-      print(e);
-      return false;
-    }
-  }
-
 }
 
 // class BatteryChannelMethod {
