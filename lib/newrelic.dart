@@ -5,9 +5,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// class for interacting with native integrations through method channel
 class NRIFlutter {
+  // define method channel name
   static const platform = MethodChannel('nri.flutter');
 
+  // set a string attribute
   static Future<bool> setStringValue(String name, String value) async {
     late bool response;
     try {
@@ -21,6 +24,7 @@ class NRIFlutter {
     }
   }
 
+  // set a double attribute
   static Future<bool> setDoubleValue(String name, double value) async {
     late bool response;
     try {
@@ -34,6 +38,7 @@ class NRIFlutter {
     }
   }
 
+  // set a bool attribute
   static Future<bool> setBoolValue(String name, bool value) async {
     late bool response;
     try {
@@ -47,6 +52,7 @@ class NRIFlutter {
     }
   }
 
+  // increment a double attribute
   static Future<bool> incrementValue(String name, {double value = 1.0}) async {
     late bool response;
     try {
@@ -60,6 +66,7 @@ class NRIFlutter {
     }
   }
 
+  // send a custom event
   static Future<bool> setCustomValue(String type,
       {String name = "", Map<String, dynamic>? attributes}) async {
     late bool response;
@@ -78,6 +85,7 @@ class NRIFlutter {
     }
   }
 
+  // send an exception event
   static Future<bool> recordException(String stacktrace) async {
     late bool response;
     try {
@@ -91,6 +99,7 @@ class NRIFlutter {
     }
   }
 
+  // crash the app
   static Future<bool> crashNow() async {
     late bool response;
     try {

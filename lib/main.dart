@@ -18,46 +18,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // instantiate app
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const BatteryChannel(),
+      home: const NRIFlutterApp(),
     );
   }
 }
 
-class NewRelicMiddleWare extends StatefulWidget {
-  const NewRelicMiddleWare({Key? key}) : super(key: key);
+class NRIFlutterApp extends StatefulWidget {
+  const NRIFlutterApp({Key? key}) : super(key: key);
 
   @override
-  State<NewRelicMiddleWare> createState() => _NewRelicMiddleWareState();
+  State<NRIFlutterApp> createState() => _NRIFlutterAppState();
 }
 
-class _NewRelicMiddleWareState extends State<NewRelicMiddleWare> {
-  @override
-  void initState() {
-    // run here
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const BatteryChannel();
-  }
-}
-
-class BatteryChannel extends StatefulWidget {
-  const BatteryChannel({Key? key}) : super(key: key);
-
-  @override
-  State<BatteryChannel> createState() => _BatteryChannelState();
-}
-
-class _BatteryChannelState extends State<BatteryChannel> {
+class _NRIFlutterAppState extends State<NRIFlutterApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +47,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
           children: [
             Padding(
               padding: const EdgeInsets.all(32.0),
+              // logo and group name
               child: Column(
                 children: [
                   Image.asset("assets/newrelic.png"),
@@ -82,24 +63,28 @@ class _BatteryChannelState extends State<BatteryChannel> {
                 ],
               ),
             ),
+            // add a string attribute
             _button("Send String", () async {
               var response = await NRIFlutter.setStringValue(
                   "flutterSetStringValue77", "value77");
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // add a double attribute
             _button("Send Double", () async {
               var response = await NRIFlutter.setDoubleValue(
                   "flutter-setDoubleValue", 2.0);
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // add a bool attribute
             _button("Send Bool", () async {
               var response =
                   await NRIFlutter.setBoolValue("flutter-setBoolValue", true);
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // increment an existing double attribute
             _button("Increment Value", () async {
               var response = await NRIFlutter.incrementValue(
                   "flutter-incrementValue",
@@ -107,16 +92,19 @@ class _BatteryChannelState extends State<BatteryChannel> {
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // send a custom event
             _button("Send Custom Event", () async {
               var response = await NRIFlutter.setCustomValue("Flutter");
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // track request time
             _button("Send Request", () async {
               var response = await sendRequest();
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // send an exception
             _button("Send Exception", () async {
               late bool response;
               try {
@@ -132,6 +120,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // send a button click event
             _button("Click Button", () async {
               late bool response;
               try {
@@ -147,6 +136,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
               showSnackBar(context, response);
             }),
             const SizedBox(height: 8),
+            // send crash event
             _button("Crash App", () async {
               var response = await NRIFlutter.crashNow();
               showSnackBar(context, response);
@@ -157,6 +147,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
     );
   }
 
+  // shows a bottom snackbar reflecting a bool response from the method channel
   void showSnackBar(BuildContext context, bool response) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -168,6 +159,7 @@ class _BatteryChannelState extends State<BatteryChannel> {
     );
   }
 
+  // button wrapper for UI
   Widget _button(String name, VoidCallback onTap) {
     return CupertinoButton(
       minSize: 0,
@@ -192,30 +184,3 @@ class _BatteryChannelState extends State<BatteryChannel> {
     );
   }
 }
-
-// class BatteryChannelMethod {
-//   static const platform = MethodChannel('samples.flutter.dev/battery');
-
-  // static Future<String> getBatteryLevel() async {
-  //   String batteryLevel;
-  //   try {
-  //     final int result = await platform.invokeMethod('getBatteryLevel');
-  //     batteryLevel = 'Battery level at $result % .';
-  //   } on PlatformException catch (e) {
-  //     batteryLevel = "Failed to get battery level: '${e.message}'.";
-  //   }
-
-  //   return batteryLevel;
-  // }
-
-//   static Future<bool> sendNREvent() async {
-//     late bool val;
-//     try {
-//       val = await platform.invokeMethod('testNRI');
-//       return val;
-//     } on PlatformException catch (e) {
-//       print(e);
-//       return false;
-//     }
-//   }
-// }
