@@ -32,5 +32,5 @@ The JSON file for the dashboard to be imported can be found in ```dashboard.json
 The metrics displayed in the dashboard include: ```Average Session Duration, Button Clicks, Average/Max Memory Usage, Exceptions, Network Latency and Crashes```. 
 Metrics are collected on both iOS and Android and both OS's data can be visualized on the same panel to compare/contrast application performance. 
 
-<img width="1705" alt="Screen Shot 2022-07-20 at 3 55 44 PM" src="https://source.datanerd.us/storage/user/3757/files/32db453b-f116-4611-8412-bd3ea070948c">
+<img width="1705" alt="Screen Shot 2022-07-20 at 3 55 44 PM" src="https://source.datanerd.us/jlanders/integration_test/blob/main/dashboard_flutter01.png">
 
