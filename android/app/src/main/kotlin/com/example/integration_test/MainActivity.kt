@@ -11,14 +11,20 @@ import android.content.IntentFilter
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 
+import android.os.Bundle
+
 import com.newrelic.agent.android.NewRelic;
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "nri.flutter"
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+      NewRelic.withApplicationToken("AAf4a2c3bb308be98bbbf9008dd84b65d9cb3b4d07-NRMA").start(this.applicationContext)
+      super.onCreate(savedInstanceState)
+  }
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
-    NewRelic.withApplicationToken("AAf4a2c3bb308be98bbbf9008dd84b65d9cb3b4d07-NRMA").start(this.applicationContext)
     MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
         
       // This method is invoked on the main thread.
@@ -78,6 +84,10 @@ class MainActivity: FlutterActivity() {
             NewRelic.recordHandledException(e)
             result.success(true)
           }
+        
+        // Crash app
+        } else if (call.method == "crashNow") {
+          NewRelic.crashNow()
         
         // Query not matched
         } else{

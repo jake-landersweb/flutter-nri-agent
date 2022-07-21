@@ -77,4 +77,29 @@ class NRIFlutter {
       return false;
     }
   }
+
+  static Future<bool> recordException(String stacktrace) async {
+    late bool response;
+    try {
+      final Map<String, dynamic> params = {'stacktrace': stacktrace};
+      response = await platform.invokeMethod('recordException', params);
+      return response;
+    } catch (e, stacktrace) {
+      log(e.toString());
+      log(stacktrace.toString());
+      return false;
+    }
+  }
+
+  static Future<bool> crashNow() async {
+    late bool response;
+    try {
+      response = await platform.invokeMethod('crashNow');
+      return response;
+    } catch (e, stacktrace) {
+      log(e.toString());
+      log(stacktrace.toString());
+      return false;
+    }
+  }
 }
