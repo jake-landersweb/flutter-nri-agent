@@ -2,7 +2,7 @@
 
 The process for installing the Flutter NRI Agent is a little invloved, but the steps will tried to be outlined as well as possible here.
 
-## Intall the agents
+## Install the agents
 
 You will need to install the agents individually in your projects in order for Flutter to be able to scrape the lower level system information like memory usage.
 
